@@ -4,9 +4,9 @@ const { ListNode } = require('../extensions/list-node.js');
  * Given a singly linked list of integers l and an integer k,
  * remove all elements from list l that have a value equal to k.
  *
- * @param {List} l
+ * @param {ListNode} l
  * @param {Number} k
- * @return {List}
+ * @return {ListNode}
  *
  * @example
  * For l = [3, 1, 2, 3, 4, 5] and k = 3,
@@ -21,9 +21,15 @@ const { ListNode } = require('../extensions/list-node.js');
  * }
  */
 function removeKFromList(l, k) {
-  if (!l || !l.next) return;
-  if (l.next.value === k) l.next = l.next.next;
-  removeKFromList(l.next, k);
+  const temp = new ListNode(0);
+  temp.next = l;
+  d(temp, k);
+  return temp.next;
+}
+
+function d(l, k) {
+  while (l.next && l.next.value === k) l.next = l.next.next;
+  if (l.next) d(l.next, k);
 }
 
 module.exports = {
