@@ -17,11 +17,11 @@ class BinarySearchTree {
   }
 
   add(data) {
-    if (!this.main) this.main = new Node(data);
+    if (!this.main) return this.main = new Node(data);
 
     let cur = this.root();
     while (cur) {
-      if (data <= cur.data) {
+      if (data < cur.data) {
         if (cur.left) cur = cur.left;
         else return cur.left = new Node(data);
       } else {
@@ -31,89 +31,68 @@ class BinarySearchTree {
     }
   }
 
-  has(data) {
-    if (!this.main) return false;
-
-    let cur = this.root();
-    while (cur) {
-      if (cur.data === data) return true;
-      if (cur.data < data) cur = cur.left;
-      else cur = cur.right;
-    }
-
-    return false;
-  }
-
   find(data) {
     let cur = this.root();
     while (cur) {
       if (cur.data === data) return cur;
-      if (cur.data < data) cur = cur.left;
+      if (cur.data > data) cur = cur.left;
       else cur = cur.right;
     }
 
     return null;
   }
 
-  remove(data) {
-    this.main = this.removeRec(this.main, data);
+  has(data) {
+    return !!this.find(data);
   }
 
+  remove(data) {
+    this.removeRec(this.main, data);
+  }
+
+  /**
+   * 
+   * @param {Node} node 
+   * @param {Number} data 
+   * @returns 
+   */
   removeRec(node, data) {
-    if (!node) return node;
+    if (!node) return null;
 
-    if (node.data > data) {
+    if (data < node.data)
       node.left = this.removeRec(node.left, data);
-      return node;
-    }
-
-    if (node.data < data) {
+    else if (data > node.data)
       node.right = this.removeRec(node.right, data);
-      return node;
+    else {
+      if (!node.left) return node.right;
+      if (!node.right) return node.left;
+
+      let tmp = this.minNode(node.right);
+      node.data = tmp.data;
+      node.right = this.removeRec(node.right, tmp.data);
     }
 
-    if (!node.left) return node.right;
-    if (!node.right) return node.left;
-
-    let parent = node;
-    let cur = node.right;
-    while (cur.left) {
-      parent = cur;
-      cur = cur.left;
-    }
-
-    if (parent !== node) {
-      parent.left = cur.right;
-      parent.right = cur.right;
-    } else {
-    }
-
-    node.data = cur.data;
     return node;
   }
 
+  minNode(start) {
+    let cur = start;
+    while (cur && cur.left) cur = cur.left;
+    return cur;
+  }
+
+  maxNode(start) {
+    let cur = start;
+    while (cur && cur.right) cur = cur.right;
+    return cur;
+  }
+
   min() {
-    let res = null;
-    let cur = this.root();
-
-    while (cur) {
-      res = cur.data;
-      cur = cur.left;
-    }
-
-    return res;
+    return this.minNode(this.root())?.data;
   }
 
   max() {
-    let res = null;
-    let cur = this.root();
-
-    while (cur) {
-      res = cur.data;
-      cur = cur.right;
-    }
-
-    return res;
+    return this.maxNode(this.root())?.data;
   }
 }
 
